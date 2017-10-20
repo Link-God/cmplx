@@ -11,103 +11,94 @@ struct complex_t
 	float imag;
 };
 
-void add (complex_t & comp , float &t1,float &t2)
+complex_t add(complex_t num1	, complex_t num2)
 {
-
-	comp.real += t1;
-	comp.imag += t2;
+	complex_t result;
+	result.real = num1.real+num2.real;
+	result.imag = num1.imag+num2.imag;
+	return result;
 }
 
-void sub(complex_t & comp, float &t1, float &t2)
+complex_t sub(complex_t num1, complex_t num2)
 {
-	comp.real = t1 - comp.real;
-	comp.imag = t2 - comp.imag;
+	complex_t result;
+	result.real = num1.real - num2.real;
+	result.imag = num1.imag - num2.imag;
+	return result;
 }
 
-void mul(complex_t & comp, float &t1, float &t2)
+complex_t mul(complex_t num1, complex_t num2)
 {
-	float t = comp.real;
-	comp.real = (t1 * comp.real - t2*comp.imag);
-	comp.imag = (t2 *t + t1* comp.imag);
+	complex_t result;
+	result.real = (num1.real * num2.real - num1.imag*num2.imag);
+	result.imag = (num1.imag *num2.real + num1.real * num2.imag);
+	return result;
 }
 
-void div(complex_t & comp, float &t1, float &t2)
+complex_t div(complex_t num1, complex_t num2)
 {
-	float t = comp.real;
-	comp.real = ((t1*comp.real+t2*comp.imag) / (comp.real*comp.real+comp.imag*comp.imag));
-	comp.imag = ( (t2*t-t1*comp.imag) / (t*t+ comp.imag*comp.imag) );
+	complex_t result;
+	result.real = ((num1.real*num2.real+num1.imag*num2.imag) / (num2.real*num2.real+num2.imag*num2.imag));
+	result.imag = ( (num1.imag*num2.real-num1.real*num2.imag) / (num2.real*num2.real + num2.imag*num2.imag) );
+	return result;
 }
 
-void read(complex_t & comp)
+bool read(istringstream & stream, complex_t  & comp )
 {
-	string str;
 	char op;
-	getline(cin, str);
-	istringstream stream(str);
-	bool pr=true;
-	// first number
 	if (stream >> op && op == '(' &&
 		stream >> comp.real &&
 		stream >> op && op == ',' &&
 		stream >> comp.imag &&
-		stream >> op && op == ')') {
+		stream >> op && op == ')') 
+	{
+		return true;
 	}
 	else {
 		cout << "An error has occured while reading input data";
-		pr = false;
 		fail = true;
-		//end of first
+		return false;
 	}
-	while (stream >> op && pr)
-	{
-		char oper = op; float t1, t2; t1 = comp.real; t2 = comp.imag;
-		if (stream >> op && op == '(' &&
-			stream >> comp.real &&
-			stream >> op && op == ',' &&
-			stream >> comp.imag &&
-			stream >> op && op == ')')
-		{
-			switch (oper)
-			{
-			case '+':
-				add(comp, t1, t2);
-				break;
-			case'-':
-				sub(comp, t1, t2);
-				break;
-			case '*':
-				mul(comp, t1, t2);
-				break;
-			case'/':
-				div(comp, t1, t2);
-				break;
-			default:
-				cout << "wrong operator";
-				fail = true;
-				break;
-			}
-		}
-		else 
-		{
-			cout << "An error has occured while reading input data";
-			fail = true;
-			break;
-		}
-	}
-	//cout << "wrong operator";
 }
 
-void write(complex_t comp)
+void write(complex_t result)
 {
 	cout << endl;
-	cout << "(" << comp.real << ", " << comp.imag << ")";
+	cout << "(" << result.real << ", " << result.imag << ")";
 }
 
 int main()
 {
-	complex_t comp;
-	read(comp);
-	if(!fail) write(comp);
+	complex_t result,num1,num2;
+
+
+	string str;
+	char oper;
+	getline(cin, str);
+	istringstream stream(str);
+	if (read(stream, num1) && stream >> oper  && read(stream, num2)) {
+		switch (oper)
+		{
+		case '+':
+			result = add(num1, num2);
+			break;
+		case'-':
+			result = sub(num1, num2);
+			break;
+		case '*':
+			result = mul(num1, num2);
+			break;
+		case'/':
+			result = div(num1, num2);
+			break;
+		default:
+			cout << "wrong operator";
+			fail = true;
+			break;
+		}
+	}
+	else fail = true;
+	if(!fail) write(result);
 	cin.get();
     return 0;
 }
