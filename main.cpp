@@ -108,6 +108,6 @@ int main()
 	complex_t comp;
 	read(comp);
 	if(!fail) write(comp);
-	system("pause");
+	cin.get();
     return 0;
 }
